@@ -132,6 +132,8 @@ class InputController:
     
           elif button == config.mouse_right:
               game.highlight_targets.clear()
+
+              game.board.toggle_flag(col, row)
                 
           elif button == config.mouse_middle:
                   neighbors = []
@@ -241,3 +243,4 @@ def main() -> int:
 if __name__ == "__main__":
 
     raise SystemExit(main())
+
