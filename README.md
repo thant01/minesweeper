@@ -35,4 +35,16 @@ json 파일에 최고기록이 저장됨
 
 <img width="665" height="780" alt="스크린샷 2025-12-21 182650" src="https://github.com/user-attachments/assets/65ddeea4-6104-488a-8bac-9813858a0c4b" />
 
+Issue #5
+
+게임 시작 후 진행 시간 표기
+
+이미 구현됨
+
+
+<img width="1023" height="769" alt="스크린샷 2025-12-21 182927" src="https://github.com/user-attachments/assets/f223f8ab-887a-46ab-9d4f-7c9aa8f5e07e" />
+
+<img width="931" height="850" alt="스크린샷 2025-12-21 182940" src="https://github.com/user-attachments/assets/7567d7a2-35dc-4f87-aa8e-2adf93995102" />
+
+
 
