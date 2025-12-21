@@ -17,6 +17,23 @@ import config
 from components import Board
 from pygame.locals import Rect
 
+import json
+import os
+
+SCORE_FILE = "highscore.json"
+
+def load_scores():
+    if not os.path.exists(SCORE_FILE):
+        return {}
+    try:
+        with open(SCORE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return {}
+
+def save_scores(scores):
+    with open(SCORE_FILE, "w", encoding="utf-8") as f:
+        json.dump(scores, f, indent=2)
 
 class Renderer:
     """Draws the Minesweeper UI.
@@ -85,7 +102,7 @@ class Renderer:
         self.screen.blit(left_label, (10, 12))
         self.screen.blit(right_label, (config.width - right_label.get_width() - 10, 12))
 
-    def draw_result_overlay(self, text: str | None) -> None:
+    def draw_result_overlay(self, text: str | None, best_time: str | None = None) -> None:
         """Draw a semi-transparent overlay with centered result text, if any."""
         if not text:
             return
@@ -95,6 +112,10 @@ class Renderer:
         label = self.result_font.render(text, True, config.color_result)
         rect = label.get_rect(center=(config.width // 2, config.height // 2))
         self.screen.blit(label, rect)
+        if best_time:
+            sub = self.font.render(f"Best: {best_time}", True, config.color_result)
+            sub_rect = sub.get_rect(center = (config.width // 2, config.height // 2 + 30))
+            self.screen.blit(sub, sub_rect)
 
 
 class InputController:
@@ -151,7 +172,10 @@ class Game:
     def __init__(self, difficulty = "Normal"):
         pygame.init()
         pygame.display.set_caption(config.title)
+        self.difficulty_name = difficulty
         self.difficulty = config.difficulties[difficulty]
+        self.scores = load_scores()
+        self.new_record = False
         self.screen = pygame.display.set_mode(config.display_dimension)
         self.clock = pygame.time.Clock()
         self.board = Board(self.difficulty["cols"], self.difficulty["rows"], self.difficulty["mines"])
@@ -172,6 +196,7 @@ class Game:
         self.started = False
         self.start_ticks_ms = 0
         self.end_ticks_ms = 0
+        self.new_record = False
 
     def _elapsed_ms(self) -> int:
         """Return elapsed time in milliseconds (stops when game ends)."""
@@ -209,7 +234,11 @@ class Game:
             for c in range(self.board.cols):
                 highlighted = (now <= self.highlight_until_ms) and ((c, r) in self.highlight_targets)
                 self.renderer.draw_cell(c, r, highlighted)
-        self.renderer.draw_result_overlay(self._result_text())
+
+        result_text = self._result_text()
+        best = self.scores.get(self.difficulty_name, 0)
+        best_text = self._format_time(best) if best else None
+        self.renderer.draw_result_overlay(result_text, best_text)
         pygame.display.flip()
 
     def run_step(self) -> bool:
@@ -224,6 +253,15 @@ class Game:
                     self.board.reveal_hint()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.input.handle_mouse(event.pos, event.button)
+
+        if self.board.win and self.started and not self.new_record:
+            elapsed = self._elapsed_ms()
+            prev = self.scores.get(self.difficulty_name, 0)
+            if prev == 0 or elapsed < prev:
+                self.scores[self.difficulty_name] = elapsed
+                save_scores(self.scores)
+            self.new_record = True
+        
         if (self.board.game_over or self.board.win) and self.started and not self.end_ticks_ms:
             self.end_ticks_ms = pygame.time.get_ticks()
         self.draw()
