@@ -81,3 +81,9 @@ result_overlay_alpha = 120
 # Misc
 title = "Minesweeper"
 
+# Game Difficulty
+difficulties = {
+    "Easy" : {"cols": 8, "rows": 8, "mines": 20 },
+    "Normal": {"cols": 12, "rows": 12, "mines": 30 },
+    "Hard": {"cols": 16, "rows": 16, "mines": 60 }
+}
