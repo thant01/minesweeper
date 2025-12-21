@@ -148,23 +148,24 @@ class InputController:
 class Game:
     """Main application object orchestrating loop and high-level state."""
 
-    def __init__(self):
+    def __init__(self, difficulty = "Normal"):
         pygame.init()
         pygame.display.set_caption(config.title)
+        self.difficulty = config.difficulties[difficulty]
         self.screen = pygame.display.set_mode(config.display_dimension)
         self.clock = pygame.time.Clock()
-        self.board = Board(config.cols, config.rows, config.num_mines)
+        self.board = Board(self.difficulty["cols"], self.difficulty["rows"], self.difficulty["mines"])
         self.renderer = Renderer(self.screen, self.board)
         self.input = InputController(self)
         self.highlight_targets = set()
         self.highlight_until_ms = 0
         self.started = False
         self.start_ticks_ms = 0
-        self.end_ticks_ms = 0
+        self.end_ticks_ms = 0    
 
     def reset(self):
         """Reset the game state and start a new board."""
-        self.board = Board(config.cols, config.rows, config.num_mines)
+        self.board = Board(self.difficulty["cols"], self.difficulty["rows"], self.difficulty["mines"])
         self.renderer.board = self.board
         self.highlight_targets.clear()
         self.highlight_until_ms = 0
@@ -200,7 +201,7 @@ class Game:
         if pygame.time.get_ticks() > self.highlight_until_ms and self.highlight_targets:
             self.highlight_targets.clear()
         self.screen.fill(config.color_bg)
-        remaining = max(0, config.num_mines - self.board.flagged_count())
+        remaining = max(0, self.difficulty["mines"] - self.board.flagged_count())
         time_text = self._format_time(self._elapsed_ms())
         self.renderer.draw_header(remaining, time_text)
         now = pygame.time.get_ticks()
@@ -230,7 +231,8 @@ class Game:
 
 def main() -> int:
     """Application entrypoint: run the main loop until quit."""
-    game = Game()
+    difficulty = "Normal"   # 원하는 난이도 설정
+    game = Game(difficulty)
     running = True
     while running:
         running = game.run_step()
