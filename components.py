@@ -181,6 +181,16 @@ class Board:
                 count += 1
         return count
 
+    def reveal_hint(self):
+        candidates = [
+             cell for cell in self.cells
+             if not cell.state.is_mine and not cell.state.is_revealed
+        ]
+        if not candidates:
+            return
+        cell = random.choice(candidates)
+        self.reveal(cell.col, cell.row)
+
     def _reveal_all_mines(self) -> None:
         """Reveal all mines; called on game over."""
         for cell in self.cells:
