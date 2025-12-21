@@ -72,63 +72,65 @@ class Board:
 
     def neighbors(self, col: int, row: int) -> List[Tuple[int, int]]:
         # TODO: Return list of valid neighboring coordinates around (col,row).
-          deltas = [
-              (-1, -1), (0, -1), (1, -1),
-              (-1, 0),            (1, 0),
-              (-1, 1),  (0, 1),  (1, 1),
-          ]
-          result = for dc, dr in deltas:
-                       nc, nr = col + dc, row + dr
-                       if self.is_inbounds(nc, nr):
-                           result.append((nc, nr))
+        deltas = [
+            (-1, -1), (0, -1), (1, -1),
+            (-1, 0),            (1, 0),
+            (-1, 1),  (0, 1),  (1, 1),
+        ]
+        result = []
+        for dc, dr in deltas:
+                    nc, nr = col + dc, row + dr
+                    if self.is_inbounds(nc, nr):
+                        result.append((nc, nr))
         
-          return result
+        return result
     
 
     def place_mines(self, safe_col: int, safe_row: int) -> None:
         # TODO: Place mines randomly, guaranteeing the first click and its neighbors are safe. And Compute adjacency counts
-          all_positions = [(c, r) for r in range(self.rows) for c in range(self.cols)]
-          forbidden = {(safe_col, safe_row)} | set(self.neighbors(safe_col, safe_row))
-          pool = [p for p in all_positions if p not in forbidden]
-          random.shuffle(pool)
+        all_positions = [(c, r) for r in range(self.rows) for c in range(self.cols)]
+        forbidden = {(safe_col, safe_row)} | set(self.neighbors(safe_col, safe_row))
+        pool = [p for p in all_positions if p not in forbidden]
+        random.shuffle(pool)
+        mine_positions = set(pool[:self.num_mines])
         
-          for c, r in mine_positions:
-              self.cells[self.index(c, r)].state.is_mine = True
+        for c, r in mine_positions:
+            self.cells[self.index(c, r)].state.is_mine = True
               
-          for r in range(self.rows):
-              for c in range(self.cols):
-                  cell = self.cells[self.index(c, r)]
-                  if not cell.state.is_mine:
-                      mine_count = 0 
-                      for nc, nr in self.neighbors(c, r):
-                          neighbor_cell = self.cells[self.index(nc, nr)]
-                          if neighbor_cell.state.is_mine:
-                              mine_count += 1
-                        cell.state.adjacent = mine_count
+        for r in range(self.rows):
+            for c in range(self.cols):
+                cell = self.cells[self.index(c, r)]
+                if not cell.state.is_mine:
+                    mine_count = 0 
+                    for nc, nr in self.neighbors(c, r):
+                        neighbor_cell = self.cells[self.index(nc, nr)]
+                        if neighbor_cell.state.is_mine:
+                            mine_count += 1
+                    cell.state.adjacent = mine_count
 
-          self._mines_placed = True
+        self._mines_placed = True
 
         
 
     def reveal(self, col: int, row: int) -> None:
         # TODO: Reveal a cell; if zero-adjacent, iteratively flood to neighbors.
-          if not self.is_inbounds(col, row):
-              return
+        if not self.is_inbounds(col, row):
+            return
 
-          index = self.index(col, row)
-          cell = self.cells[index]
+        index = self.index(col, row)
+        cell = self.cells[index]
         if cell.state.is_revealed or cell.state.is_flagged:
             return
             
-          if not self._mines_placed:
-              self.place_mines(col, row)
+        if not self._mines_placed:
+            self.place_mines(col, row)
 
-          if cell.state.is_mine:
-              self.game_over = True
-              self._reveal_all_mines()
-              return
+        if cell.state.is_mine:
+            self.game_over = True
+            self._reveal_all_mines()
+            return
 
-             to_reveal = [(col, row)]
+        to_reveal = [(col, row)]
        
         while to_reveal:
             c, r = to_reveal.pop()
@@ -155,19 +157,19 @@ class Board:
             if current_cell.state.is_flagged:
                 current_cell.state.is_flagged = False
         
-          self._check_win()
+        self._check_win()
         
 
     def toggle_flag(self, col: int, row: int) -> None:
         # TODO: Toggle a flag on a non-revealed cell.
-          if not self.is_inbounds(col, row):
-              return
+        if not self.is_inbounds(col, row):
+            return
 
-           index = self.index(col, row)
-           cell = self.cells[index]
+        index = self.index(col, row)
+        cell = self.cells[index]
 
-            if not cell.state.revealed:
-                cell.state.is_flagged = not cell.state.is_flagged
+        if not cell.state.is_revealed:
+            cell.state.is_flagged = not cell.state.is_flagged
         
         
 
