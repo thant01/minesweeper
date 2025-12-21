@@ -23,3 +23,16 @@ Issue #3
 키보드 h 누르면 공개되지 않은 지뢰가 아닌 칸 하나가 공개
 
 <img width="992" height="808" alt="스크린샷 2025-12-21 182500" src="https://github.com/user-attachments/assets/e0b8a72d-f1b8-4723-8743-4504798d1f09" />
+
+Issue #4
+
+하이스코어 표출 기능 추가
+
+json 파일에 최고기록이 저장됨
+게임 종료 후 플레이한 난이도의 최고기록이 표출
+
+<img width="885" height="835" alt="스크린샷 2025-12-21 182638" src="https://github.com/user-attachments/assets/0b82a1e1-c953-4cb8-9148-486bd8a93935" />
+
+<img width="665" height="780" alt="스크린샷 2025-12-21 182650" src="https://github.com/user-attachments/assets/65ddeea4-6104-488a-8bac-9813858a0c4b" />
+
+
