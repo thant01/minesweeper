@@ -35,6 +35,7 @@ def save_scores(scores):
     with open(SCORE_FILE, "w", encoding="utf-8") as f:
         json.dump(scores, f, indent=2)
 
+
 class Renderer:
     """Draws the Minesweeper UI.
 
@@ -166,6 +167,7 @@ class InputController:
         
             game.highlight_until_ms = pygame.time.get_ticks() + config.highlight_duration_ms
 
+
 class Game:
     """Main application object orchestrating loop and high-level state."""
 
@@ -283,5 +285,3 @@ def main() -> int:
 if __name__ == "__main__":
 
     raise SystemExit(main())
-
-

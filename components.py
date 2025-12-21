@@ -83,8 +83,7 @@ class Board:
                     if self.is_inbounds(nc, nr):
                         result.append((nc, nr))
         
-        return result
-    
+        return result   
 
     def place_mines(self, safe_col: int, safe_row: int) -> None:
         # TODO: Place mines randomly, guaranteeing the first click and its neighbors are safe. And Compute adjacency counts
@@ -108,9 +107,7 @@ class Board:
                             mine_count += 1
                     cell.state.adjacent = mine_count
 
-        self._mines_placed = True
-
-        
+        self._mines_placed = True       
 
     def reveal(self, col: int, row: int) -> None:
         # TODO: Reveal a cell; if zero-adjacent, iteratively flood to neighbors.
@@ -205,9 +202,3 @@ class Board:
             for cell in self.cells:
                 if not cell.state.is_revealed and not cell.state.is_mine:
                     cell.state.is_revealed = True
-
-
-
-
-
-
